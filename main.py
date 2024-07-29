@@ -41,11 +41,21 @@ my_posts = [
 
 def find_post(id):
     """
-    This class is for find post with id.
+    This function is for find post with id.
     """
     for post in my_posts:
         if post["id"] == id:
             return post
+
+
+def find_index(id):
+    """
+    This function is for find index post with id.
+    """
+
+    for index, post in enumerate(my_posts):
+        if post["id"] == id:
+            return index
 
 
 @app.get("/")
@@ -83,3 +93,20 @@ async def get_posts(id: int, response: Response):
         )
 
     return {"detail": post}
+
+
+@app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_post(id: int):
+
+    # delete object from db
+    index = find_index(id)
+
+    if index == None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Not Found :)",
+        )
+
+    my_posts.pop(index)
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
