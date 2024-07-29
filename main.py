@@ -110,3 +110,23 @@ async def delete_post(id: int):
     my_posts.pop(index)
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@app.put("/posts/{id}", status_code=status.HTTP_201_CREATED)
+async def update_post(id: int, post: Post):
+
+    # update object from db
+    index = find_index(id)
+
+    if index == None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Not Found :)",
+        )
+
+    # apply changes
+    post_instance = post.dict()
+    post_instance["id"] = id
+    my_posts[index] = post_instance
+
+    return {"data": post_instance}
